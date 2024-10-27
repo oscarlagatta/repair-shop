@@ -8,7 +8,7 @@ export default function Home() {
               <h1 className="text-4xl font-bold">Raj&apos;s Computer <br/> Repair Shop</h1>
               <address>
                 555 Gate way lane<br/>
-                London, W8
+                London, W7
               </address>
               <p>Open Daily: 9am to 5pm</p>
               <Link href="tel:55555555" className="hover:underline">
