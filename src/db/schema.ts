@@ -19,7 +19,6 @@ export const customers = pgTable("customers", {
   address2: varchar("address2"),
   city: varchar("city").notNull(),
   state: varchar("state", { length: 2 }).notNull(),
-  postal_code: varchar("postal_code", { length: 10 }).notNull(),
   notes: text("notes"),
   active: boolean("active").notNull().default(true),
   createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -47,7 +46,8 @@ export const tickets = pgTable("tickets", {
 
 // Create relations
 
-export const customerRelations = relations(customers, ({ many }) => ({
+// Create relations
+export const customersRelations = relations(customers, ({ many }) => ({
   tickets: many(tickets),
 }));
 

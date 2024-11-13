@@ -2,7 +2,7 @@ import { getCustomer } from "@/lib/queries/getCustomers";
 import { getTicket } from "@/lib/queries/getTicket";
 import { BackButton } from "@/components/back-button";
 import * as Sentry from "@sentry/nextjs";
-
+import TicketForm from "@/app/(rs)/tickets/form/ticket-form";
 export default async function TicketFormPage({
   searchParams,
 }: {
@@ -15,16 +15,17 @@ export default async function TicketFormPage({
       return (
         <>
           <h2 className="text-2xl mb-2">
-            Ticker ID or Customer ID required to load ticket form
+            Ticket ID or Customer ID required to load ticket form
           </h2>
           <BackButton title="Go Back" variant="default" />
         </>
       );
     }
 
-    // new ticket form
+    // New ticket form
     if (customerId) {
-      const customer = await getCustomer(parseInt(customerId, 10));
+      const customer = await getCustomer(parseInt(customerId));
+
       if (!customer) {
         return (
           <>
@@ -40,7 +41,7 @@ export default async function TicketFormPage({
         return (
           <>
             <h2 className="text-2xl mb-2">
-              Customer ID #{customerId} is not active
+              Customer ID #{customerId} is not active.
             </h2>
             <BackButton title="Go Back" variant="default" />
           </>
@@ -49,29 +50,30 @@ export default async function TicketFormPage({
 
       // return ticket form
       console.log(customer);
+      return <TicketForm customer={customer} />;
+    }
 
-      // edit an existing ticket with ticket form
-      if (ticketId) {
-        const ticket = await getTicket(parseInt(ticketId, 10));
+    // Edit ticket form
+    if (ticketId) {
+      const ticket = await getTicket(parseInt(ticketId));
 
-        if (!ticket) {
-          return (
-            <>
-              <h2 className="text-2xl mb-2">Ticket ID #{ticketId} not found</h2>
-              <BackButton title="Go Back" variant="default" />
-            </>
-          );
-        }
-
-        const customer = await getCustomer(ticket.customerId);
-
-        // return ticket form
-        console.log("ticket: ", ticket);
-        console.log("customer", customer);
+      if (!ticket) {
+        return (
+          <>
+            <h2 className="text-2xl mb-2">Ticket ID #{ticketId} not found</h2>
+            <BackButton title="Go Back" variant="default" />
+          </>
+        );
       }
+
+      const customer = await getCustomer(ticket.customerId);
+
+      // return ticket form
+      console.log("ticket: ", ticket);
+      console.log("customer: ", customer);
+      return <TicketForm customer={customer} ticket={ticket} />;
     }
   } catch (e) {
-    console.error(e);
     if (e instanceof Error) {
       Sentry.captureException(e);
       throw e;
